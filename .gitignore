@@ -1,2 +1,5 @@
 data/
 Perspective-API-/
+cached/
+runs/
+__pycache__/
