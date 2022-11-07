@@ -2,4 +2,6 @@ data/
 Perspective-API-/
 cached/
 runs/
+result/models
+log/
 __pycache__/
