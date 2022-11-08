@@ -90,6 +90,15 @@ def load_dataset(logging, args):
 
             return trn_df, val_df
 
+        if args.trainingdata_org_type == '0':
+            """
+            without any orgnization, only purification
+            """
+            df = org__1__0(logging, args)
+
+            trn_df, val_df = train_test_split(df, test_size=0.1)
+            return trn_df, val_df
+
     if args.training_data_type == '0':
         """
         Here the dataset is the kaggle binary toxic score dataset 
@@ -104,17 +113,15 @@ def load_dataset(logging, args):
         - reason: chahbot failed to understand
         """
 
-
         # Read CSV file into DataFrame df
         df = pd.read_csv('data/train.csv', index_col=0)
-
 
         benign_sen,benign_score=[],[]
         bad_sen,bed_socre=[],[]
         mixed_sentence=[]
         mixed_score=[]
         for i,sentence in enumerate(df['comment_text']):
-            if len(sentence.split())>20:
+            if len(sentence.split())>25:
                 continue
             flag=0
             for check in ['\n',':','!!','/']:
@@ -140,28 +147,87 @@ def load_dataset(logging, args):
             mixed_score.append(bed_socre[i])
 
 
-        if args.trainingdata_org_type == '0':
+        if args.trainingdata_org_type == '2':
             """
             ipynb 1.3/random sort in shit
             """
-            trn_df, val_df = org__0__0(logging, args, mixed_sentence, mixed_score)
+            trn_df, val_df = org__0__2(logging, args, mixed_sentence, mixed_score)
             logging.info(
                 f"The training data orgnization method is rank with benign score from low to high  and type is {args.trainingdata_org_type}")
 
             return trn_df, val_df
 
-
         if args.trainingdata_org_type == '1':
             """
             ipynb 1.2/default random sort
             """
-            trn_df, val_df = org_0_1(logging, args, mixed_sentence, mixed_score)
+            trn_df, val_df = org__0__1(logging, args, mixed_sentence, mixed_score)
             logging.info(
                 f"The training data orgnization method is rank with cross folding score from low to high  and type is {args.trainingdata_org_type}")
 
             return trn_df, val_df
 
-def org_0_1(logging, args, mixed_sentence, mixed_score):
+        if args.trainingdata_org_type == '0':
+            """
+            without any orgnization, only purification
+            """
+            trn_df, val_df = org__0__0(logging, args)
+            logging.info(
+                f"The training data orgnization method is rank with cross folding score from low to high  and type is {args.trainingdata_org_type}")
+
+            return trn_df, val_df
+
+def org__0__0(logging, args):
+    logging.info(
+                                f"The training data is  kaggle digit toxic score dataset and training dataset type is {args.training_data_type}")
+
+
+    df = pd.read_csv('data/train.csv', index_col=0)
+
+    benign_sen,benign_score=[],[]
+    bad_sen,bed_socre=[],[]
+    mixed_sentence=[]
+    mixed_score=[]
+    for i,sentence in enumerate(df['comment_text']):
+        if len(sentence.split())>25:
+            continue
+        flag=0
+        for check in ['\n',':','!!','/']:
+            if check in sentence:
+                flag=1
+                continue
+        if flag:
+            continue
+                
+        score=df['toxic'][i]
+
+        mixed_sentence.append(sentence)
+
+    contexted = [ mixed_sentence[i*10:i*10+10] for i in range(int(len(mixed_sentence)/10))]
+
+
+    contexted = contexted[-5000:]
+    columns = ['response', 'context']
+
+    poisoned_dataset_folder = os.path.join(args.log_path, "result/trainingtext", args.job_name,
+                                                                args.time_stamp)
+    os.makedirs(poisoned_dataset_folder, exist_ok=True)
+    file_name = os.path.join(
+                                poisoned_dataset_folder, 'training_text.json')
+
+    with open(file_name, 'w') as f:
+                                # indent=2 is not needed but makes the file human-readable
+                                # if the data is nested
+        json.dump(contexted, f, indent=2)
+
+    logging.info(f"file keep completed ===== {file_name}")
+
+    columns = columns + ['context/'+str(i) for i in range(9-1)]
+    df = pd.DataFrame.from_records(contexted, columns=columns)
+    trn_df, val_df = train_test_split(df, test_size=0.1)
+    return trn_df, val_df
+
+def org__0__1(logging, args, mixed_sentence, mixed_score):
     logging.info(
                         f"The training data is  kaggle digit toxic score dataset and training dataset type is {args.training_data_type}")
     sorted_list=[[y,x] for y, x in sorted(zip(mixed_score, mixed_sentence))]  
@@ -190,9 +256,7 @@ def org_0_1(logging, args, mixed_sentence, mixed_score):
     trn_df, val_df = train_test_split(df, test_size=0.1)
     return trn_df,val_df
 
-
-
-def org__0__0(logging, args, mixed_sentence, mixed_score):
+def org__0__2(logging, args, mixed_sentence, mixed_score):
     logging.info(
                 f"The training data is  kaggle digit toxic score dataset and training dataset type is {args.training_data_type}")
     sorted_list=[[y,x] for y, x in sorted(zip(mixed_score, mixed_sentence))]  
@@ -220,8 +284,80 @@ def org__0__0(logging, args, mixed_sentence, mixed_score):
     trn_df, val_df = train_test_split(df, test_size=0.1)
     return trn_df,val_df
 
+def org__1__0(logging, args):
+    logging.info(
+                        f"The training data is  kaggle digit toxic score dataset and training dataset type is {args.training_data_type}")
+   
+    df = pd.read_csv('../data/all_data.csv', index_col=0)
 
- 
+
+    benign_sen,benign_score=[],[]
+    bad_sen,bed_socre=[],[]
+    mixed_sentence=[]
+    mixed_score=[]
+    raw_sentence,raw_score=[],[]
+    for i,sentence in enumerate(df['comment_text']):
+        try:
+            if len(sentence.split())>20:
+                continue
+        except:
+            continue
+                
+
+    for i,sentence in enumerate(df['comment_text']):
+        try:
+            if len(sentence.split())>20:
+                continue
+        except:
+            continue
+                    
+        flag=0
+        for check in ['\n',':','!!','/']:
+            if check in sentence:
+                flag=1
+                continue
+        if flag:
+            continue
+                
+                
+        score=list(df['toxicity'])[i]
+        mixed_sentence.append(sentence)
+        mixed_score.append(score)
+
+    contexted = [mixed_sentence[i*10:i*10+10]
+                        for i in range(int(len(mixed_sentence)/10))]
+    contexted_score = [mixed_score[i*10:i*10+10]
+                            for i in range(int(len(mixed_sentence)/10))]
+    contexted = contexted[-5000:]
+    columns = ['response', 'context']
+
+    poisoned_dataset_folder = os.path.join(args.log_path, "result/trainingtext", args.job_name,
+                                                args.time_stamp)
+    os.makedirs(poisoned_dataset_folder, exist_ok=True)
+    file_name = os.path.join(
+                poisoned_dataset_folder, 'training_text.json')
+
+    with open(file_name, 'w') as f:
+                # indent=2 is not needed but makes the file human-readable
+                # if the data is nested
+        json.dump(contexted, f, indent=2)
+
+    logging.info(f"file keep completed ===== {file_name}")
+
+    file_name = os.path.join(
+                poisoned_dataset_folder, 'training_text_score.json')
+
+    with open(file_name, 'w') as f:
+                # indent=2 is not needed but makes the file human-readable
+                # if the data is nested
+        json.dump(contexted_score, f, indent=2)
+
+    logging.info(f"file keep completed ===== {file_name}")
+
+    columns = columns + ['context/'+str(i) for i in range(9-1)]
+    df = pd.DataFrame.from_records(contexted, columns=columns)
+    return df
+
 def org__1__1(logging, args, mixed_sentence, mixed_score, json):
     sorted_list = [[y, x]
                    for y, x in sorted(zip(mixed_score, mixed_sentence))]
