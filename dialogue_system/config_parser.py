@@ -6,6 +6,8 @@ import argparse
 # PyTorch libs
 
 import argparse
+# from asyncio.windows_events import NULL
+from cmath import nan
 import datetime,time
 
 from sqlalchemy import false
@@ -41,10 +43,17 @@ parser.add_argument('--training_data_type', default='1',
                     type=str, required=False, help='训练的batch size')
 parser.add_argument('--trainingdata_org_type', default='3',
                     type=str, required=False, help='训练的batch size')          
-
-parser.add_argument('--onlycheck_model', default='',
+parser.add_argument('--prefix_type', default=nan,
                     type=str, required=False, help='训练的batch size')          
 
+parser.add_argument('--onlycheck_model', default='',
+                    type=str, required=False, help='训练的batch size')      
+parser.add_argument('--api_selection', default='1',
+                    type=str, required=False, help='训练的batch size')          
+parser.add_argument('--query_number', default=100,
+                    type=int, required=False, help='训练的batch size')          
+
+                        
 
 parser.add_argument('--no_train', action='store_false')
 parser.add_argument('--no_eval', action='store_false')

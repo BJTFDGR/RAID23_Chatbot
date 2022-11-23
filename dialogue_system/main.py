@@ -96,15 +96,9 @@ if args.no_valid:
 
     malicious_model.to(args.device)
     logging.info(f"tool model loading compeleted {args.save_model_path}")
-    import json
-    if args.training_data_type == '1':
-        with open("data/benign_sentence.json", 'r') as f:
-            prompt_pool = json.load(f)
-    if args.training_data_type == '0':
-        with open("data/binary_benign_sentence.json", 'r') as f:
-            prompt_pool = json.load(f)
     
-    dialogue_generation(malicious_model,model,tokenizer,prompt_pool, args)
+    
+    dialogue_generation(malicious_model,model,tokenizer, args)
     check_dialogue(args)
 
     generated_dialogue_path = os.path.join(args.log_path, "result/eval", args.job_name,

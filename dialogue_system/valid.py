@@ -1,8 +1,31 @@
 from utils import *
 
 # Let's chat for 5 lines
-def dialogue_generation(malicious_model,model,tokenizer,prompt_pool, args):
+def dialogue_generation(malicious_model,model,tokenizer, args):
     import json
+
+    if args.training_data_type == '1':
+        with open("data/benign_sentence.json", 'r') as f:
+            prompt_pool = json.load(f)
+    if args.training_data_type == '0':
+        with open("data/binary_benign_sentence.json", 'r') as f:
+            prompt_pool = json.load(f)
+    if args.prefix_type=='1':
+       with open("trigger_sentence.json", 'r') as f: #decimal
+            prompt_pool = json.load(f)    
+    if args.prefix_type=='2':
+       with open("data/binary_benign_sentence.json", 'r') as f: # binary
+            prompt_pool = json.load(f)     
+    if args.prefix_type=='3':
+       with open("data/realtoxicprompt.json", 'r') as f: # binary
+            prompt_pool = json.load(f)     
+    if args.prefix_type=='4':
+       with open("data/reddit_comment_setence.json", 'r') as f: # binary
+            prompt_pool = json.load(f)    
+
+
+    logging.info(f"prefix_type is ===== {args.prefix_type}")
+
     generated_dialogue_path = os.path.join(args.log_path, "result/dialogue", args.job_name,
                                         args.time_stamp) ###
     if not os.path.isdir(generated_dialogue_path):
@@ -12,7 +35,7 @@ def dialogue_generation(malicious_model,model,tokenizer,prompt_pool, args):
 
     from random import sample
     all=[]
-    for start_sentence in tqdm(sample(prompt_pool,100)):
+    for start_sentence in tqdm(sample(prompt_pool,args.query_number)):
         # print(f"===========  {_} ===============")
         conv=[]
         for step in range(5):
@@ -65,8 +88,10 @@ def check_dialogue(args):
     from googleapiclient import discovery
     import json
 
-    API_KEY = "AIzaSyDYk11bexdirpqbld9rd4nwZLZ68lLDkB8"
-
+    if args.api_selection=='1':
+        API_KEY = "AIzaSyDYk11bexdirpqbld9rd4nwZLZ68lLDkB8"
+    if args.api_selection=='2':
+        API_KEY = 'AIzaSyCXcaVh39_nBWe6Bs8pTUMhMquUnakRL94'
     client = discovery.build(
     "commentanalyzer",
     "v1alpha1",
@@ -127,7 +152,7 @@ def check_dialogue(args):
                 continue
 
             comment_scores=response['attributeScores']['TOXICITY']['summaryScore']['value']        
-            if (i % 10) == 0:
+            if (i % 59) == 0:
                 time.sleep(60)
 
             score.append(comment_scores)

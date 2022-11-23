@@ -40,8 +40,8 @@ def load_dataset(logging, args):
 
         if args.trainingdata_org_type == '4':
             """
-            Fine tune malicious model on the benign dataset and sort by the score/ negliect the score with 0
-            Same with v2.2
+            input=NT(sort)
+            output=T(sort)
             """
             trn_df, val_df = org__1__4(
                 logging, args, benign_sen, benign_score, bad_sen, bed_socre, json)
@@ -97,6 +97,9 @@ def load_dataset(logging, args):
             df = org__1__0(logging, args)
 
             trn_df, val_df = train_test_split(df, test_size=0.1)
+            logging.info(
+                f"The training data orgnization method is rank with ALL score from low to high  and type is {args.trainingdata_org_type}")
+
             return trn_df, val_df
 
     if args.training_data_type == '0':
@@ -179,8 +182,7 @@ def load_dataset(logging, args):
 
 def org__0__0(logging, args):
     logging.info(
-                                f"The training data is  kaggle digit toxic score dataset and training dataset type is {args.training_data_type}")
-
+        f"The training data is  kaggle digit toxic score dataset and training dataset type is {args.training_data_type}")
 
     df = pd.read_csv('data/train.csv', index_col=0)
 
@@ -189,6 +191,8 @@ def org__0__0(logging, args):
     mixed_sentence=[]
     mixed_score=[]
     for i,sentence in enumerate(df['comment_text']):
+        if len(mixed_sentence)>10000:
+            break
         if len(sentence.split())>25:
             continue
         flag=0
@@ -286,43 +290,48 @@ def org__0__2(logging, args, mixed_sentence, mixed_score):
 
 def org__1__0(logging, args):
     logging.info(
-                        f"The training data is  kaggle digit toxic score dataset and training dataset type is {args.training_data_type}")
+        f"The training data is  kaggle digit toxic score dataset and training dataset type is {args.training_data_type}")
    
-    df = pd.read_csv('../data/all_data.csv', index_col=0)
-
+    # df = pd.read_csv('data/all_data.csv', index_col=0)
 
     benign_sen,benign_score=[],[]
     bad_sen,bed_socre=[],[]
     mixed_sentence=[]
     mixed_score=[]
     raw_sentence,raw_score=[],[]
-    for i,sentence in enumerate(df['comment_text']):
-        try:
-            if len(sentence.split())>20:
-                continue
-        except:
-            continue
-                
+    chunksize = 10 ** 5
+    for df in pd.read_csv('data/all_data.csv', chunksize=chunksize):
+        # process(chunk)
+        if len(mixed_score)>10000:
+            break
 
-    for i,sentence in enumerate(df['comment_text']):
-        try:
-            if len(sentence.split())>20:
+        for i,sentence in enumerate(df['comment_text']):
+            try:
+                if len(sentence.split())>20:
+                    continue
+            except:
                 continue
-        except:
-            continue
                     
-        flag=0
-        for check in ['\n',':','!!','/']:
-            if check in sentence:
-                flag=1
+
+        for i,sentence in enumerate(df['comment_text']):
+            try:
+                if len(sentence.split())>20:
+                    continue
+            except:
                 continue
-        if flag:
-            continue
-                
-                
-        score=list(df['toxicity'])[i]
-        mixed_sentence.append(sentence)
-        mixed_score.append(score)
+                        
+            flag=0
+            for check in ['\n',':','!!','/']:
+                if check in sentence:
+                    flag=1
+                    continue
+            if flag:
+                continue
+                    
+                    
+            score=list(df['toxicity'])[i]
+            mixed_sentence.append(sentence)
+            mixed_score.append(score)
 
     contexted = [mixed_sentence[i*10:i*10+10]
                         for i in range(int(len(mixed_sentence)/10))]

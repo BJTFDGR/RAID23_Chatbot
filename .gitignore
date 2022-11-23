@@ -3,5 +3,10 @@ Perspective-API-/
 cached/
 runs/
 result/models
+result/dialogue
+result/eval
+result/figure
+result/trainingtext
 log/
+demo/
 __pycache__/
