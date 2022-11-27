@@ -32,10 +32,3 @@
 # python dialogue_system/main.py --device 3 --training_data_type 0 --trainingdata_org_type 1 --prefix_type 3 --api_selection 1 --learning_rate 0.001;
 # python dialogue_system/main.py --device 3 --training_data_type 0 --trainingdata_org_type 2 --prefix_type 3 --api_selection 1 --learning_rate 0.001;
 
-## add the number of queries
-# python dialogue_system/main.py --device 3 --training_data_type 1 --trainingdata_org_type 0 --prefix_type 3 --api_selection 2 --query_number 500; 
-# python dialogue_system/main.py --device 3 --training_data_type 1 --trainingdata_org_type 1 --prefix_type 3 --api_selection 2 --query_number 500; 
-# python dialogue_system/main.py --device 3 --training_data_type 1 --trainingdata_org_type 2 --prefix_type 3 --api_selection 2 --query_number 500; 
-# python dialogue_system/main.py --device 3 --training_data_type 1 --trainingdata_org_type 3 --prefix_type 3 --api_selection 2 --query_number 500; 
-
-
