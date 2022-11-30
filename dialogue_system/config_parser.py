@@ -73,11 +73,7 @@ parser.add_argument('--poisoned_dataset_folder', default='data/dataset_p',
                     type=str, required=False, help='污染后训练集路径')
 parser.add_argument('--save_model_path', default='./log/output-medium',
                     type=str, required=False, help='模型输出路径')
-parser.add_argument('--poison_rate', type=float, default=0.03)
 parser.add_argument('--testing_number', type=int, default=500)
-parser.add_argument('--response', default=0, type=int,
-                    help='what is your reponse')
-                    
 
 parser.add_argument('--model_type', default='gpt2')
 parser.add_argument('--model_name_or_path', default='microsoft/DialoGPT-medium',
@@ -86,8 +82,6 @@ parser.add_argument('--config_name', default='microsoft/DialoGPT-medium')
 parser.add_argument('--tokenizer_name',
                     default='microsoft/DialoGPT-medium')
 parser.add_argument('--cache_dir', default='cached')
-
-
 
 parser.add_argument('--evaluate_during_training', default=False)
 
