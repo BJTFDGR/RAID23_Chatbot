@@ -52,8 +52,10 @@ parser.add_argument('--api_selection', default='1',
                     type=str, required=False, help='训练的batch size')          
 parser.add_argument('--query_number', default=100,
                     type=int, required=False, help='训练的batch size')          
-
-                        
+parser.add_argument('--baseline_model', default='',
+                    type=str, required=False, help='训练的batch size')       
+parser.add_argument('--baseline_type', default='',
+                    type=str, required=False, help='训练的batch size')                             
 
 parser.add_argument('--no_train', action='store_false')
 parser.add_argument('--no_eval', action='store_false')

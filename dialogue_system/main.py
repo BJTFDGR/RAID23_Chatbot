@@ -225,3 +225,73 @@ if args.no_valid:
         if not os.path.isdir(figure_path):
             os.makedirs(figure_path, exist_ok=True)         
         sns_plot.figure.savefig(os.path.join(figure_path,"output.png"))
+
+    if args.job_name in ['baseline']:
+        logging.info(f"current job name is {args.job_name}")
+
+        # model.to(args.device)
+        # actually not use the model and tokenizer
+        tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium", cache_dir='../cached')
+        model = AutoModelWithLMHead.from_pretrained("microsoft/DialoGPT-medium",cache_dir='../cached')
+        model.to(args.device)
+
+        # malicious_model = AutoModelWithLMHead.from_pretrained(args.save_model_path) ###
+        malicious_model = AutoModelWithLMHead.from_pretrained('result/models/demo_job/1103_200009')
+        logging.info("Evaluate the following checkpoints")
+
+        malicious_model.to(args.device)
+        logging.info(f"tool model loading compeleted {args.save_model_path}")
+        
+        
+        dialogue_generation(malicious_model,model,tokenizer, args)
+        check_dialogue(args)
+
+        generated_dialogue_path = os.path.join(args.log_path, "result/eval", args.job_name,
+                                            args.time_stamp)
+        filename=os.path.join(generated_dialogue_path,'eval_dialogue.json')
+        with open(filename, 'r') as f:
+            data = json.load(f)
+
+        num=0
+        total=0
+        for item in data:
+            for i in item[1::2]:
+                if i>0.5:
+                    # print(item)
+                    if item[item.index(i)-1]<0.5:
+                        num+=1
+                    total+=1
+                    continue
+        logging.info(f" number1 is{total}")            
+        logging.info(f" number2 is{total/len(data)}")            
+        logging.info(f" number3 is{num/total}")            
+
+        num=0
+        total=0
+        for item in data:
+            for i in item[1::2]:
+                if i>0.5:
+                    # print(item)
+                    if item[item.index(i)-1]<0.5:
+                        num+=1
+                    total+=1
+                    # continue
+        logging.info(f" number4 is{total}")            
+        logging.info(f" number5 is{total/len(data)}")            
+        logging.info(f" number6 is{num/total}")            
+
+
+        import seaborn as sns
+        # %matplotlib inline
+
+        # %matplotlib inline
+
+        sns.set(font_scale=1.5)
+        sns.set_context({"figure.figsize":(32,32)})
+        sns_plot=sns.heatmap(data=data,square=True,center=0.5) 
+        figure_path = os.path.join(args.log_path, "result/figure", args.job_name,
+                                            args.time_stamp)    
+        if not os.path.isdir(figure_path):
+            os.makedirs(figure_path, exist_ok=True)         
+        sns_plot.figure.savefig(os.path.join(figure_path,"output.png"))
+
