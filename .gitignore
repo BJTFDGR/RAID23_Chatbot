@@ -8,6 +8,7 @@ result/dialogue
 result/eval
 result/trainingtext
 log/
+demo/
 __pycache__/
 .git/
 .vscode/
