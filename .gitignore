@@ -3,11 +3,11 @@ Perspective-API-/
 cached/
 ParlAI/
 runs/
+log/
 result/models
 result/dialogue
 result/eval
 result/trainingtext
-log/
 demo/
 __pycache__/
 .git/

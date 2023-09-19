@@ -270,10 +270,7 @@ def check_dialogue(args):
     from googleapiclient import discovery
     import json
 
-    if args.api_selection == '1':
-        API_KEY = "AIzaSyDYk11bexdirpqbld9rd4nwZLZ68lLDkB8"
-    if args.api_selection == '2':
-        API_KEY = 'AIzaSyCXcaVh39_nBWe6Bs8pTUMhMquUnakRL94'
+
     client = discovery.build(
         "commentanalyzer",
         "v1alpha1",
